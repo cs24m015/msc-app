@@ -1,0 +1,81 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env.example
+    volumes:
+      - ./backend/app:/app/app
+    expose:
+      - "8000"
+    depends_on:
+      - mongo
+      - opensearch
+    networks:
+      - default
+      - dmz00
+
+  frontend:
+    build:
+      context: ./frontend
+      target: runtime
+    environment:
+      - VITE_API_BASE_URL=/api
+    expose:
+      - "4173"
+    depends_on:
+      - backend
+    networks:
+      - default
+      - dmz00
+
+  frontend-build:
+    build:
+      context: ./frontend
+      target: dev
+    entrypoint: ["/usr/local/bin/frontend-entrypoint"]
+    volumes:
+      - ./frontend:/workspace
+    environment:
+      - VITE_API_BASE_URL=/api
+      - WORKSPACE=/workspace
+    networks:
+      - default
+
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    expose:
+      - "27017"
+    networks:
+      - default
+
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - default
+
+networks:
+  dmz00:
+    name: dmz00
+    external: true
+
+volumes:
+  mongo-data:
+  opensearch-data:
