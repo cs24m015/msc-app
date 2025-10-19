@@ -64,9 +64,9 @@ services:
       memlock:
         soft: -1
         hard: -1
-    ports:
-      - "9200:9200"
-      - "9600:9600"
+    expose:
+      - "9200"
+      - "9600"
     volumes:
       - opensearch-data:/usr/share/opensearch/data
     networks:
