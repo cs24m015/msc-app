@@ -21,6 +21,7 @@ services:
       target: runtime
     environment:
       - VITE_API_BASE_URL=/api
+      - VITE_DOMAIN=${DOMAIN:-vuln.nohub.lol}
     expose:
       - "4173"
     depends_on:
@@ -38,6 +39,7 @@ services:
       - ./frontend:/workspace
     environment:
       - VITE_API_BASE_URL=/api
+      - VITE_DOMAIN=${DOMAIN:-vuln.nohub.lol}
       - WORKSPACE=/workspace
     networks:
       - default
@@ -58,7 +60,7 @@ services:
       - discovery.type=single-node
       - plugins.security.disabled=true
       - bootstrap.memory_lock=true
-      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=chAng3me!d!An0w
     ulimits:
       memlock:
