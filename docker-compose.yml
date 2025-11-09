@@ -5,7 +5,7 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend/app:/app/app
+      - ./backend/app:/app
     expose:
       - "8000"
     depends_on:
